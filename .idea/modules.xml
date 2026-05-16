@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AI-Academic-Integrity-Detection.iml" filepath="$PROJECT_DIR$/.idea/AI-Academic-Integrity-Detection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../streamlit-project/.idea/streamlit-project.iml" filepath="$PROJECT_DIR$/../streamlit-project/.idea/streamlit-project.iml" />
     </modules>
   </component>
 </project>
