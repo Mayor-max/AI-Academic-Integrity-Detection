@@ -3,3 +3,4 @@ streamlit_pdf==2.0.1
 python-dotenv==1.2.2
 matplotlib==3.10.9
 plotly==6.7.0
+nltk==3.9.4
