@@ -2,31 +2,33 @@ import streamlit as st
 import pickle
 import re
 import nltk
-import tensorflow as tf
+import ssl
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-# Download NLTK resources
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# Fix SSL issues
+ssl._create_default_https_context = ssl._create_unverified_context
 
-# Load vectorizer
+# Download NLTK resources
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+
+# Load TF-IDF vectorizer
 with open("models/tfidf_vectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
 
-# Load trained model
-model = tf.keras.models.load_model(
-    "models/ai_detection_model.h5"
-)
+# Load Random Forest model
+with open("models/rf_model.pkl", "rb") as f:
+    model = pickle.load(f)
 
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# Text preprocessing function
+# Text preprocessing
 def preprocess_text(text):
 
     text = text.lower()
@@ -49,7 +51,7 @@ def preprocess_text(text):
 st.title("AI-Generated Academic Text Detection System")
 
 st.write(
-    "Paste an academic text below to determine whether it is human-written or AI-generated."
+    "Paste academic text below to determine whether it is human-written or AI-generated."
 )
 
 user_input = st.text_area(
@@ -65,16 +67,20 @@ if st.button("Detect"):
         [cleaned_text]
     )
 
-    prediction = model.predict(vectorized_text)
+    prediction = model.predict(vectorized_text)[0]
 
-    probability = prediction[0][0]
+    probability = model.predict_proba(
+        vectorized_text
+    )[0][1]
 
-    if probability >= 0.5:
+    if prediction == 1:
+
         st.error(
             f"Prediction: AI-Generated Text ({probability:.2f})"
         )
 
     else:
+
         st.success(
             f"Prediction: Human-Written Text ({1 - probability:.2f})"
         )
